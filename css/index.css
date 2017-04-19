@@ -383,7 +383,9 @@ h3.status_header {
 }
 
 .memory .ebp,
-.memory .esp {
+.memory .esp,
+.memory .rbp,
+.memory .rsp {
 	position: absolute;
 	top: 0;
 	width: 36px;
@@ -395,13 +397,15 @@ h3.status_header {
 	transition: top 400ms ease-out;
 }
 
-.memory .ebp {
+.memory .ebp,
+.memory .rbp {
 	right: 44px;
 
 	color: #c0392b;
 }
 
-.memory .esp {
+.memory .esp,
+.memory .rsp {
 	right: 5px;
 
 	color: #16a085;

@@ -14,8 +14,8 @@ var MemoryView = Backbone.View.extend({
 
 	render: function () {
 		this.$el.empty().append(this.template());
-		this.$ebp = this.$('.ebp');
-		this.$esp = this.$('.esp');
+		this.$rbp = this.$('.rbp');
+		this.$rsp = this.$('.rsp');
 		this.$wordContainerWrapper = this.$('.mem-words-wrapper');
 		this.$wordContainer = this.$('.mem-words');
 		this.$wordContainer.on('scroll', this.autoload.bind(this));
@@ -62,23 +62,23 @@ var MemoryView = Backbone.View.extend({
 	},
 
 	updateStackPointers: function () {
-		var ebp = REG[5] / 4 * 15;
-		var esp = REG[4] / 4 * 15;
-		var old_ebp = this.$ebp.position().top;
-		var old_esp = this.$esp.position().top;
-		var ebp_changed = false, esp_changed = false;
+		var rbp = REG[5] / 4 * 15;
+		var rsp = REG[4] / 4 * 15;
+		var old_rbp = this.$rbp.position().top;
+		var old_rsp = this.$rsp.position().top;
+		var rbp_changed = false, rsp_changed = false;
 
-		if (ebp !== old_ebp && (ebp_changed = true))
-			this.$ebp.css('top', ebp + 'px');
-		if (esp !== old_esp && (esp_changed = true))
-			this.$esp.css('top', esp + 'px');
+		if (rbp !== old_rbp && (rbp_changed = true))
+			this.$rbp.css('top', rbp + 'px');
+		if (rsp !== old_rsp && (rsp_changed = true))
+			this.$rsp.css('top', rsp + 'px');
 		
-		if (ebp_changed || esp_changed) {
+		if (rbp_changed || rsp_changed) {
 			var containerHeight = this.$wordContainer.height();
 			var scrollTop = this.$wordContainer.scrollTop();
 			var newScroll = null;
 
-			var max = ebp_changed ? esp_changed ? Math.max(ebp, esp) : ebp : esp;
+			var max = rbp_changed ? rsp_changed ? Math.max(rbp, rsp) : rbp : rsp;
 			if (max > scrollTop + containerHeight - 15)
 				newScroll = max - containerHeight + 55;
 
@@ -88,7 +88,7 @@ var MemoryView = Backbone.View.extend({
 
 			// Prefer scrolling to the higher of the two possible changed
 			// values, if necessary.
-			var min = ebp_changed ? esp_changed ? Math.min(ebp, esp) : ebp : esp;
+			var min = rbp_changed ? rsp_changed ? Math.min(rbp, rsp) : rbp : rsp;
 			if (min < scrollTop + 15)
 				newScroll = min - 40;
 

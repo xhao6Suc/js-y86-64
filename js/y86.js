@@ -3,7 +3,7 @@ var MEM_SIZE = 0x2000;
 
 // Registers and memory
 var PC 		= 0,
-	REG		= new Uint32Array(8),
+	REG		= new Uint32Array(16),
 	STAT	= 'AOK',
 	MEMORY 	= new Uint8Array(MEM_SIZE),
 	SF = 0, ZF = 0, OF = 0,
@@ -31,7 +31,7 @@ function print (x) {
 // Reset
 function RESET() {
 	PC 	= 0;
-	REG	= new Uint32Array(8);
+	REG	= new Uint32Array(16);
 	STAT = 'AOK';
 	SF = 0; ZF = 0; OF = 0;
 	ERR = '';

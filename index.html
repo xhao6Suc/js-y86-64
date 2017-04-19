@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>y86 Simulator</title>
+    <title>y86-64 Simulator</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/index.css">
   </head>
@@ -11,8 +11,8 @@
 
 <script type="text/template" id="default_y86_code">.pos 0
 Init:
-    irmovl Stack, %ebp
-    irmovl Stack, %esp
+    irmovl Stack, %rbp
+    irmovl Stack, %rsp
     
 .pos 0x100
 Stack:
@@ -20,7 +20,7 @@ Stack:
 
     <script type="text/template" id="tmpl_app">
         <div class="header">
-            <h1>Y86 Simulator</h1>
+            <h1>Y86-64 Simulator</h1>
             <div class="actions">
                 <button class="compile"><i class="fa fa-bolt"></i> Assemble</button>
                 <button class="reset"><i class="fa fa-repeat"></i> Reset</button>
@@ -28,9 +28,9 @@ Stack:
                 <button class="continue"><i class="fa fa-angle-double-right"></i> <span>Start</span></button>
             </div>
             <div class="links">
-                <a href="https://github.com/xsznix/js-y86/tree/master/samples">Examples</a>
-                <a href="https://github.com/xsznix/js-y86/wiki">Wiki</a>
-                <a href="https://github.com/xsznix/js-y86">GitHub <i class="fa fa-github"></i></a>
+                <a href="https://github.com/boginw/js-y86/tree/master/samples">Examples</a>
+                <a href="https://github.com/boginw/js-y86/wiki">Wiki</a>
+                <a href="https://github.com/boginw/js-y86">GitHub <i class="fa fa-github"></i></a>
             </div>
         </div>
         <div class="app-body">
@@ -59,8 +59,8 @@ Stack:
         <div class="mem-words-wrapper">
             <div class="mem-words">
                 <div class="stack-pointers">
-                    <div class="ebp"><i class="fa fa-caret-left"></i> EBP</div>
-                    <div class="esp"><i class="fa fa-caret-left"></i> ESP</div>
+                    <div class="rbp"><i class="fa fa-caret-left"></i> RBP</div>
+                    <div class="rsp"><i class="fa fa-caret-left"></i> RSP</div>
                 </div>
             </div>
         </div>
@@ -87,44 +87,79 @@ Stack:
         <div class="column register_column">
             <h3>Registers</h3>
             <div class="register">
-                <div class="label">%eax</div>
-                <div class="value_hex"><%= eax_hex %></div>
-                <div class="value_dec"><%= eax_dec %></div>
+                <div class="label">%rax</div>
+                <div class="value_hex"><%= rax_hex %></div>
+                <div class="value_dec"><%= rax_dec %></div>
             </div>
             <div class="register">
-                <div class="label">%ecx</div>
-                <div class="value_hex"><%= ecx_hex %></div>
-                <div class="value_dec"><%= ecx_dec %></div>
+                <div class="label">%rcx</div>
+                <div class="value_hex"><%= rcx_hex %></div>
+                <div class="value_dec"><%= rcx_dec %></div>
             </div>
             <div class="register">
-                <div class="label">%edx</div>
-                <div class="value_hex"><%= edx_hex %></div>
-                <div class="value_dec"><%= edx_dec %></div>
+                <div class="label">%rdx</div>
+                <div class="value_hex"><%= rdx_hex %></div>
+                <div class="value_dec"><%= rdx_dec %></div>
             </div>
             <div class="register">
-                <div class="label">%ebx</div>
-                <div class="value_hex"><%= ebx_hex %></div>
-                <div class="value_dec"><%= ebx_dec %></div>
+                <div class="label">%rbx</div>
+                <div class="value_hex"><%= rbx_hex %></div>
+                <div class="value_dec"><%= rbx_dec %></div>
             </div>
             <div class="register">
-                <div class="label">%esp</div>
-                <div class="value_hex"><%= esp_hex %></div>
-                <div class="value_dec"><%= esp_dec %></div>
+                <div class="label">%rsp</div>
+                <div class="value_hex"><%= rsp_hex %></div>
+                <div class="value_dec"><%= rsp_dec %></div>
             </div>
             <div class="register">
-                <div class="label">%ebp</div>
-                <div class="value_hex"><%= ebp_hex %></div>
-                <div class="value_dec"><%= ebp_dec %></div>
+                <div class="label">%rbp</div>
+                <div class="value_hex"><%= rbp_hex %></div>
+                <div class="value_dec"><%= rbp_dec %></div>
             </div>
             <div class="register">
-                <div class="label">%esi</div>
-                <div class="value_hex"><%= esi_hex %></div>
-                <div class="value_dec"><%= esi_dec %></div>
+                <div class="label">%rsi</div>
+                <div class="value_hex"><%= rsi_hex %></div>
+                <div class="value_dec"><%= rsi_dec %></div>
             </div>
             <div class="register">
-                <div class="label">%edi</div>
-                <div class="value_hex"><%= edi_hex %></div>
-                <div class="value_dec"><%= edi_dec %></div>
+                <div class="label">%rdi</div>
+                <div class="value_hex"><%= rdi_hex %></div>
+                <div class="value_dec"><%= rdi_dec %></div>
+            </div>
+            <div class="register">
+                <div class="label">%r8</div>
+                <div class="value_hex"><%= r8_hex %></div>
+                <div class="value_dec"><%= r8_dec %></div>
+            </div>
+            <div class="register">
+                <div class="label">%r9</div>
+                <div class="value_hex"><%= r9_hex %></div>
+                <div class="value_dec"><%= r9_dec %></div>
+            </div>
+            <div class="register">
+                <div class="label">%r10</div>
+                <div class="value_hex"><%= r10_hex %></div>
+                <div class="value_dec"><%= r10_dec %></div>
+            </div>
+            <div class="register">
+                <div class="label">%r11</div>
+                <div class="value_hex"><%= r11_hex %></div>
+                <div class="value_dec"><%= r11_dec %></div>
+            </div>
+            <div class="register">
+                <div class="label">%r12</div>
+                <div class="value_hex"><%= r12_hex %></div>
+                <div class="value_dec"><%= r12_dec %></div>
+            </div>
+            <div class="register">
+                <div class="label">%r13</div>
+                <div class="value_hex"><%= r13_hex %></div>
+                <div class="value_dec"><%= r13_dec %></div>
+            </div>
+            <div class="register">
+                <div class="label">%r14</div>
+                <div class="value_hex"><%= r14_hex %></div>
+                <div class="value_dec"><%= r14_dec %></div>
             </div>
         </div>
         <div class="column status_column">
@@ -189,18 +224,6 @@ Stack:
             return 'All unsaved work will be lost!';
         }
     </script>
-
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-41144558-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-
   </body>
 </html>
 

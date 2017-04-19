@@ -3,7 +3,7 @@ var INSTRUCTION_LEN = [1, 1, 2, 6,
                        6, 6, 2, 5,
                        5, 1, 2, 2,
                        6, 1, 1, 1],
-	num2reg = ['%eax', '%ecx', '%edx', '%ebx','%esp', '%ebp', '%esi', '%edi'],
+	num2reg = ['%rax', '%rcx', '%rdx', '%rbx','%rsp', '%rbp', '%rsi', '%rdi', '%r8', '%r9', '%r10', '%r11', '%r12', '%r13', '%r14'],
 	inst2num = {
 		'halt': 0,
 		'nop': 1,
