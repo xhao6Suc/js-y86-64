@@ -120,8 +120,6 @@ function DECODE (bytearr) {
 		temp = temp.or(bytearr[7] << 56);
 		temp = temp.or(bytearr[8] << 64);
 		args['Dest'] = temp;
-
-		console.log(temp,bytearr);
 	} else if (len === 10) {
 		var temp = new Long(bytearr[2]);
 		temp = temp.or(bytearr[3] << 8);
@@ -380,9 +378,11 @@ var STEP_INTERVAL = null, RUN_DONE_CALLBACK;
 
 // Run 256 instructions
 function RUN_STEP () {
-	for (var i = 0; i < 256; i++) {
-		if (PC.lessThan(MEM_SIZE) && STAT === 'AOK')
+	for (var i = 0; i < 1; i++) {
+		if (PC.lessThan(MEM_SIZE) && STAT === 'AOK'){
 			STEP();
+			Backbone.Events.trigger('app:redraw');
+		}
 		else {
 			PAUSE();
 			break;
@@ -413,7 +413,7 @@ function RUN (cb) {
 		STAT = 'AOK';
 
 	// Use fastest available interval the browser can provide
-	STEP_INTERVAL = setInterval(RUN_STEP, 0);
+	STEP_INTERVAL = setInterval(RUN_STEP, 90);
 	RUN_DONE_CALLBACK = cb;
 }
 
@@ -423,10 +423,6 @@ function STEP () {
 	var icode = MEMORY[PC.toInt()] >> 4;
 	var ilen = INSTRUCTION_LEN[icode];
 	var instr = MEMORY.slice(PC.toInt(), PC.add(ilen).toInt());
-
-	if(icode == 7){
-		console.log(icode,ilen,instr);
-	}
 
 	PC = PC.add(ilen);
 

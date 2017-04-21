@@ -87,7 +87,6 @@ INSTR[6] = function () { // op
 			sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
 			OF = +(sgnA && sgnB && !sgnR ||
 			       !sgnA && !sgnB && sgnR)
-			console.log(sgnA,sgnB,sgnR);
 			break;
 		case 2:
 			REG[this.rB] = getRegister(this.rA).and(getRegister(this.rB));
