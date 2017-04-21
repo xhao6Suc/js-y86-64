@@ -43,7 +43,7 @@ function run (object) {
 	var initialState = toByteArray(object);
 	MEMORY = copy(initialState);
 
-	while (PC < MEM_SIZE && STAT === 'AOK') {
+	while (PC.lessThan(MEM_SIZE) && STAT === 'AOK') {
 		STEP();
 	}
 

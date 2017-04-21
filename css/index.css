@@ -141,15 +141,15 @@ html, body {
 	display: flex;
 	-webkit-flex-direction: column;
 	flex-direction: column;
-
-	width: 50%;
 }
 
 .editor {
+	width: 45%;
 	border-right: 1px solid #ddd;
 }
 
 .inspector {
+	width: 55%;
 	background: #fcfcfc;
 	border-left: 1px solid #ddd;
 }
@@ -258,6 +258,10 @@ html, body {
 	flex: 1 1;
 }
 
+.registers .register .value_dec{
+	margin-left: 7px;
+}
+
 .registers .register .label {
 	width: 36px;
 	margin-right: 8px;
@@ -310,7 +314,7 @@ h3.status_header {
 .memory {
 	-webkit-flex: 0 0 auto;
 	flex: 0 0 auto;
-	width: 198px;
+	width: 147px;
 
 	background: #fcfcfc;
 

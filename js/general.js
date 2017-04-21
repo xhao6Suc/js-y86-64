@@ -1,90 +1,120 @@
 // General constants and functions
-var INSTRUCTION_LEN = [1, 1, 2, 6,
-                       6, 6, 2, 5,
-                       5, 1, 2, 2,
-                       6, 1, 1, 1],
-	num2reg = ['%rax', '%rcx', '%rdx', '%rbx','%rsp', '%rbp', '%rsi', '%rdi', '%r8', '%r9', '%r10', '%r11', '%r12', '%r13', '%r14'],
+var INSTRUCTION_LEN = [ 
+		1,		//  0:halt
+		1,		//  1:nop
+		2,		//  2:rrmov
+		10,		//  3:irmov
+	    10,		//  4:rmmov
+	    10,		//  5:mrmov
+	    2,		//  6:op
+	    9,		//  7:jxx
+	    9,		//  8:call
+	    1,		//  9:ret
+	    2,		// 10:push
+	    2,		// 11:pop
+	    9,		// 12:iop
+	    1,		// 13:
+	    1,		// 14:
+	    1		// 15:brk
+    ],
+	num2reg = [
+		'%rax',
+		'%rcx',
+		'%rdx',
+		'%rbx',
+		'%rsp',
+		'%rbp',
+		'%rsi',
+		'%rdi',
+		'%r8',
+		'%r9',
+		'%r10',
+		'%r11',
+		'%r12',
+		'%r13',
+		'%r14'
+	],
 	inst2num = {
-		'halt': 0,
-		'nop': 1,
+		'halt': 0,  	//  0
+		'nop': 1,		//  1
 
-		'rrmovl': 2,
-		'cmovle': 2,
-		'cmovl': 2,
-		'cmove': 2,
-		'cmovne': 2,
-		'cmovge': 2,
-		'cmovg': 2,
+		'rrmovq': 2,    //  2
+		'cmovqe': 2,    //  3
+		'cmovq': 2,     //  4
+		'cmove': 2,     //  5
+		'cmovne': 2,    //  6
+		'cmovge': 2,    //  7
+		'cmovg': 2,     //  8
 
-		'irmovl': 3,
-		'rmmovl': 4,
-		'mrmovl': 5,
+		'irmovq': 3,    //  9
+		'rmmovq': 4,    // 10
+		'mrmovq': 5,    // 11
 
-		'addl': 6,
-		'subl': 6,
-		'andl': 6,
-		'xorl': 6,
+		'addq': 6,      // 12
+		'subq': 6,      // 13
+		'andq': 6,      // 14
+		'xorq': 6,      // 15
 
-		'jmp': 7,
-		'jle': 7,
-		'jl': 7,
-		'je': 7,
-		'jne': 7,
-		'jge': 7,
-		'jg': 7,
+		'jmp': 7,       // 16
+		'jle': 7,       // 17
+		'jl': 7,        // 18
+		'je': 7,        // 19
+		'jne': 7,       // 20
+		'jge': 7,       // 21
+		'jg': 7,        // 22
 
-		'call': 8,
-		'ret': 9,
-		'pushl': 10,
-		'popl': 11,
+		'call': 8,      // 23
+		'ret': 9,       // 24
+		'pushq': 10,    // 25
+		'popq': 11,     // 26
 
-	        'iaddl': 12,
-	        'isubl': 12,
-	        'iandl': 12,
-                'ixorl': 12,  
+        'iaddq': 12,    // 27
+        'isubq': 12,    // 28
+        'iandq': 12,    // 29
+        'ixorq': 12,    // 30
 
-		'brk': 15,
-		'brkle': 15,
-		'brkl': 15,
-		'brke': 15,
-		'brkne': 15,
-		'brkge': 15,
-		'brkg': 15
+		'brk': 15,      // 31
+		'brkle': 15,    // 32
+		'brkl': 15,     // 33
+		'brke': 15,     // 34
+		'brkne': 15,    // 35
+		'brkge': 15,    // 36
+		'brkg': 15      // 37
 	},
 	inst2fn = {
-		'addl': 0,
-		'subl': 1,
-		'andl': 2,
-		'xorl': 3,
+		'addq': 0,      //  1
+		'subq': 1,      //  2
+		'andq': 2,      //  3
+		'xorq': 3,      //  3
 
-		'rrmovl': 0,
-		'cmovle': 1,
-		'cmovl': 2,
-		'cmove': 3,
-		'cmovne': 4,
-		'cmovge': 5,
-		'cmovg': 6,
+		'rrmovq': 0,    //  4
+		'cmovqe': 1,    //  5
+		'cmovq': 2,     //  6
+		'cmove': 3,     //  7
+		'cmovne': 4,    //  8
+		'cmovge': 5,    //  9
+		'cmovg': 6,     // 10
 
-		'jmp': 0,
-		'jle': 1,
-		'jl': 2,
-		'je': 3,
-		'jne': 4,
-		'jge': 5,
-		'jg': 6,
+		'jmp': 0,       // 12
+		'jle': 1,       // 13
+		'jl': 2,        // 14
+		'je': 3,        // 15
+		'jne': 4,       // 16
+		'jge': 5,       // 17
+		'jg': 6,        // 18
 
-	        'iaddl': 0,
-	        'isubl': 1,
-	        'iandl': 2,
-                'ixorl': 3,  
+        'iaddq': 0,     // 19
+        'isubq': 1,     // 20
+        'iandq': 2,     // 21
+        'ixorq': 3,     // 22
 	    
-		'brk': 0,
-		'brkle': 1,
-		'brkl': 2,
-		'brke': 3,
-		'brkne': 4,
-		'brkge': 5,
-		'brkg': 6
+		'brk': 0,       // 23
+		'brkle': 1,     // 24
+		'brkl': 2,      // 25
+		'brke': 3,      // 26
+		'brkne': 4,     // 27
+		'brkge': 5,     // 28
+		'brkg': 6       // 29
 	};
 
 function print(x){
@@ -112,14 +142,14 @@ function printMemory(){
 	var i = 0,
 		str = '';
 	for(b in MEMORY){
-		if (i % 4 === 0 && i > 0) {
+		if (i % 16 === 0 && i > 0) {
 			print('PC = ' + (i - 4) + ' | ' + str);
 			str = '';
 		}
 		str += num2hex(MEMORY[b]);
 		i++;
 	} 
-	//print(MEMORY);
+	print(MEMORY);
 }
 
 function num2hex(num){

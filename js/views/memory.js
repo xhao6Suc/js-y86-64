@@ -28,7 +28,7 @@ var MemoryView = Backbone.View.extend({
 			this.resize();
 
 			// Widen the memory panel if there's a scroll bar.
-			var width = 386 - this.$('.stack-pointers').width()
+			var width = 415 - this.$('.stack-pointers').width()
 			this.$el.width(width);
 			this.$el.parent().width(width);
 		}.bind(this), 0);
@@ -42,7 +42,7 @@ var MemoryView = Backbone.View.extend({
 			$word = new MemWordView({ index: idx });
 			this.$words.push($word);
 			this.$wordContainer.append($word.$el);
-			idx += 4;
+			idx += 10;
 		}
 
 		this.numRendered = idx;
@@ -62,8 +62,8 @@ var MemoryView = Backbone.View.extend({
 	},
 
 	updateStackPointers: function () {
-		var rbp = REG[5] / 4 * 15;
-		var rsp = REG[4] / 4 * 15;
+		var rbp = REG[5] / 10 * 15;
+		var rsp = REG[4] / 10 * 15;
 		var old_rbp = this.$rbp.position().top;
 		var old_rsp = this.$rsp.position().top;
 		var rbp_changed = false, rsp_changed = false;
@@ -110,7 +110,7 @@ var MemWordView = Backbone.View.extend({
 	render: function () {
 		var value = this.getValue();
 		var address_str = padHex(this.index, 4);
-		var value_str = padHex(value, 8);
+		var value_str = value;
 
 		// Template is too slow. Create the nodes manually.
 		var frag = document.createDocumentFragment();
@@ -128,15 +128,20 @@ var MemWordView = Backbone.View.extend({
 	},
 
 	getValue: function () {
-		var bytes = [MEMORY[this.index], MEMORY[this.index + 1], MEMORY[this.index + 2], MEMORY[this.index + 3]];
-		return ((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | (bytes[3] << 0)) >>> 0;
+		var value = "";
+
+		for (var i = 0; i < 10; i++) {
+			value += padHex(MEMORY[this.index + i],2);
+		}
+
+		return value;
 	},
 
 	update: function () {
 		var newValue = this.getValue();
 		if (this.lastValue !== newValue) {
 			this.lastValue = newValue;
-			this.$('.value').text(padHex(newValue, 8));
+			this.$('.value').text(padHex(newValue, 20));
 		}
 	}
 });

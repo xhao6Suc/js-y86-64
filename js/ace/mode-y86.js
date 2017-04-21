@@ -20,13 +20,13 @@ define("ace/mode/y86_highlight_rules",
 				"regex": /\w+:/
 			}, {
 				"token": "keyword.control",
-				"regex": /halt|nop|rrmovl|cmovle|cmovl|cmove|cmovne|cmovge|cmovg|irmovl|rmmovl|mrmovl|addl|subl|xorl|andl|jmp|jle|jl|je|jne|jge|jg|call|ret|pushl|popl|iaddl|isubl|iandl|ixorl|brk|brkle|brkl|brke|brkne|brkge|brkg/
+				"regex": /halt|nop|rrmovq|cmovqe|cmovq|cmove|cmovne|cmovge|cmovg|irmovq|rmmovq|mrmovq|addq|subq|xorq|andq|jmp|jle|jl|je|jne|jge|jg|call|ret|pushq|popq|iaddq|isubq|iandq|ixorq|brk|brkle|brkl|brke|brkne|brkge|brkg/
 			}, {
 				"token": ["variable.language", "register"],
 				"regex": /%(?:rax|rbx|rcx|rdx|rbp|rsp|rsi|rdi|r8|r9|r10|r11|r12|r13|r14)/
 			}, {
 				"token": "constant.number",
-				"regex": /\$?\-?([0-9]+|\0\x[0-9a-f]+)/
+				"regex": /\$?\-?([0-9]+|\0\x[0-9a-fA-F]+)/
 			}]
 
 		};

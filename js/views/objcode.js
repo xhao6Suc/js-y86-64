@@ -29,7 +29,7 @@ var ObjectCodeView = Backbone.View.extend({
 	},
 
 	highlightCurrentLine: function () {
-		var linesToHighlight = this.linesByLineNo[PC] || [];
+		var linesToHighlight = this.linesByLineNo[PC.toInt()] || [];
 		var linesToUnhighlight = this.highlightedLines;
 
 		_.each(linesToUnhighlight, function ($line) {

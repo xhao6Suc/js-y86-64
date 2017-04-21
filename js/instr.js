@@ -10,17 +10,17 @@ INSTR[1] = function () {
 INSTR[2] = function () {
 	switch(this.fn) {
 		case 0:
-			// RRMOVL
+			// RRMOVQ
 			REG[this.rB] = getRegister(this.rA);
 			break;
 		case 1:
-			// CMOVLE
+			// CMOVQE
 			if (SF === 1 || ZF === 1) {
 				REG[this.rB] = getRegister(this.rA);
 			}
 			break;
 		case 2:
-			// CMOVL
+			// CMOVQ
 			if (SF === 1) {
 				REG[this.rB] = getRegister(this.rA);
 			}
@@ -52,51 +52,52 @@ INSTR[2] = function () {
 	}
 };
 INSTR[3] = function () {
-	REG[this.rB] = this.V;
+	REG[this.rB] = new Long(this.V);
 };
 INSTR[4] = function () {
         var valA = getRegister(this.rA);
-        var valB = 0; // valB is zero if rB is not used
-        if(this.rB != 15) valB = getRegister(this.rB); 
-        var valE = valB + this.D;    
-	ST(valE, valA, 4);
+        var valB = new Long(0); // valB is zero if rB is not used
+        if(!this.rB != 15) valB = getRegister(this.rB); 
+        var valE = valB.add(this.D);    
+	ST(valE.toInt(), valA, 8);
 };
 INSTR[5] = function () {
-        var valB = 0; // valB is zero if rB is not used
+        var valB = new Long(0); // valB is zero if rB is not used
         if(this.rB != 15) valB = getRegister(this.rB); 
-        var valE = valB + this.D;
-	REG[this.rA] = LD(valE);
+        var valE = valB.add(this.D);
+	REG[this.rA] = LD(valE.toInt());
 };
-INSTR[6] = function () {
+INSTR[6] = function () { // op
 	var valA = getRegister(this.rA),
 		valB = getRegister(this.rB),
-		sgnA, sgnB, sgnR, signBit = 0x80000000;
+		sgnA, sgnB, sgnR;
 	switch(this.fn) {
 		case 0:
-			sgnA = !!(valA & signBit);
-			sgnB = !!(valB & signBit);
-			REG[this.rB] += getRegister(this.rA);
-			sgnR = !!(getRegister(this.rB) & signBit);
+			sgnA = !!(valA.toBytes()[0] == 0xFF);
+			sgnB = !!(valB.toBytes()[0] == 0xFF);
+			REG[this.rB] = REG[this.rB].add(getRegister(this.rA));
+			sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
 			OF = +(sgnA && sgnB && !sgnR ||
 			       !sgnA && !sgnB && sgnR)
 			break;
 		case 1:
-			sgnA = !!(valA & signBit);
-			sgnB = !!(valB & signBit);
-			REG[this.rB] -= getRegister(this.rA);
-			sgnR = !!(getRegister(this.rB) & signBit);
+			sgnA = !!(valA.toBytes()[0] == 0xFF);
+			sgnB = !!(valB.toBytes()[0] == 0xFF);
+			REG[this.rB] = REG[this.rB].subtract(getRegister(this.rA));
+			sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
 			OF = +(sgnA && sgnB && !sgnR ||
 			       !sgnA && !sgnB && sgnR)
+			console.log(sgnA,sgnB,sgnR);
 			break;
 		case 2:
-			REG[this.rB] = getRegister(this.rA) & getRegister(this.rB);
+			REG[this.rB] = getRegister(this.rA).and(getRegister(this.rB));
 			break;
 		case 3:
-			REG[this.rB] = getRegister(this.rA) ^ getRegister(this.rB);
+			REG[this.rB] = getRegister(this.rA).xor(getRegister(this.rB));
 			break;
 	}
-	SF = getRegister(this.rB) & 0x80000000 ? 1 : 0;
-	ZF = getRegister(this.rB) === 0 ? 1 : 0;
+	SF = getRegister(this.rB).toBytes()[0] == 0xFF ? 1 : 0;
+	ZF = getRegister(this.rB).toString() === "0" ? 1 : 0;
 };
 INSTR[7] = function ()  {
 	switch(this.fn) {
@@ -144,65 +145,67 @@ INSTR[7] = function ()  {
 };
 INSTR[8] = function () {
 	var valB = getRegister(4),
-		valE = valB - 4;
-	ST(valE, PC, 4);
+		valE = valB.subtract(4);
+	ST(valE.toInt(), PC, 4);
 	REG[4] = valE;
 	PC = this.Dest;
 };
 INSTR[9] = function () {
 	var valA = getRegister(4),
 		valB = getRegister(4),
-		valE = valB + 4,
-		valM = LD(valA);
+		valE = valB.add(4),
+		valM = LD(valA.toInt());
 		REG[4] = valE;
 		PC = valM;
 };
 INSTR[10] = function () {
 	var valA = getRegister(this.rA),
 		valB = getRegister(4),
-		valE = valB - 4;
-	ST(valE, valA, 4);
+		valE = valB.subtract(4);
+	ST(valE.toInt(), valA, 4);
 	REG[4] = valE;
 };
 INSTR[11] = function () {
 	var valA = getRegister(4),
 		valB = getRegister(4),
-		valE = valB + 4,
-		valM = LD(valA);
+		valE = valB.add(4),
+		valM = LD(valA.toInt());
 	REG[4] = valE;
 	REG[this.rA] = valM;
 };
 
-INSTR[12] = function () { // iaddl, isubl, iandl, ixorl
+INSTR[12] = function () { // iaddq, isubq, iandq, ixorq
     var valA = this.V;
     var valB = getRegister(this.rB);
-    var sgnA, sgnB, sgnR, signBit = 0x80000000;
+    var sgnA, sgnB, sgnR;
     switch(this.fn) {
     case 0:
-	sgnA = !!(valA & signBit);
-	sgnB = !!(valB & signBit);
-	REG[this.rB] += valA;
-	sgnR = !!(getRegister(this.rB) & signBit);
-	OF = +(sgnA && sgnB && !sgnR ||
-	       !sgnA && !sgnB && sgnR)
-	break;
+		sgnA = !!(valA.toBytes()[0] == 0xFF);
+		sgnB = !!(valB.toBytes()[0] == 0xFF);
+		REG[this.rB] = REG[this.rB].add(valA);
+		sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
+
+		OF = +(sgnA && sgnB && !sgnR ||
+		       !sgnA && !sgnB && sgnR)
+		break;
     case 1:
-	sgnA = !!(valA & signBit);
-	sgnB = !!(valB & signBit);
-	REG[this.rB] -= valA;
-	sgnR = !!(getRegister(this.rB) & signBit);
-	OF = +(sgnA && sgnB && !sgnR ||
-	       !sgnA && !sgnB && sgnR)
-	break;
+		sgnA = !!(valA.toBytes()[0] == 0xFF);
+		sgnB = !!(valB.toBytes()[0] == 0xFF);
+		REG[this.rB] = REG[this.rB].subtract(valA);
+		sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
+
+		OF = +(sgnA && sgnB && !sgnR ||
+		       !sgnA && !sgnB && sgnR)
+		break;
     case 2:
-	REG[this.rB] = valA & getRegister(this.rB);
-	break;
+		REG[this.rB] = valA.and(getRegister(this.rB));
+		break;
     case 3:
-	REG[this.rB] = valA ^ getRegister(this.rB);
-	break;
+		REG[this.rB] = valA.xor(getRegister(this.rB));
+		break;
     }
-    SF = getRegister(this.rB) & 0x80000000 ? 1 : 0;
-    ZF = getRegister(this.rB) === 0 ? 1 : 0;
+    SF = getRegister(this.rB).toBytes()[0] == 0xFF ? 1 : 0;
+    ZF = getRegister(this.rB).toString() === "0" ? 1 : 0;
 };
 
 INSTR[15] = function () {

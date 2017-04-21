@@ -1,17 +1,32 @@
 // Constants
 var MEM_SIZE = 0x2000;
+var REG_COUNT = 16;
 
 // Registers and memory
-var PC 		= 0,
-	REG		= new Uint32Array(16),
+var PC 		= new Long(0),
+	REG		= longArray(REG_COUNT),
 	STAT	= 'AOK',
 	MEMORY 	= new Uint8Array(MEM_SIZE),
 	SF = 0, ZF = 0, OF = 0,
 	ERR = '';
 
+function longArray(length){
+	var longArr = new Array(length);
+	for (var i = 0; i < length; i++) {
+		longArr[i] = new Long();
+	}
+	return longArr;
+}
+
+function dumpRegisters(){
+	for(var i = 0; i < REG.length; i++){
+		console.log(num2reg[i]+": "+REG[i].toString());
+	}
+}
+
 // Bounds check the register array
 function getRegister (idx) {
-	if (idx < 0 || idx > 8) {
+	if (idx < 0 || idx > 15) {
 		STAT = 'INS';
 		throw new Error('Invalid register ID: 0x' + idx.toString(16));
 	}
@@ -30,8 +45,8 @@ function print (x) {
 
 // Reset
 function RESET() {
-	PC 	= 0;
-	REG	= new Uint32Array(16);
+	PC 	= new Long(0);
+	REG	= longArray(REG_COUNT);
 	STAT = 'AOK';
 	SF = 0; ZF = 0; OF = 0;
 	ERR = '';
@@ -40,15 +55,19 @@ function RESET() {
 // Load
 function LD (addr, mem) {
 	mem = mem || MEMORY;
-	var result;
-	if (addr < 0 || addr + 4 > MEM_SIZE) {
+	var result = new Long();
+	if (addr < 0 || addr + 8 > MEM_SIZE) {
 		STAT = 'ADR';
 		throw new Error("Invalid address 0x" + addr.toString(16));
 	}
-	result  = mem[addr];
-	result |= mem[addr + 1] << 8;
-	result |= mem[addr + 2] << 16;
-	result |= mem[addr + 3] << 24;
+	result = new Long(mem[addr]);
+	result = result.or(mem[addr + 1] << 8);
+	result = result.or(mem[addr + 2] << 16);
+	result = result.or(mem[addr + 3] << 24);
+	result = result.or(mem[addr + 4] << 32);
+	result = result.or(mem[addr + 5] << 40);
+	result = result.or(mem[addr + 6] << 48);
+	result = result.or(mem[addr + 7] << 56);
 	return result;
 }
 
@@ -60,11 +79,11 @@ function ST(addr, data, bytes){
 		throw new Error("Invalid address 0x" + addr.toString(16));
 	}
 	if (typeof bytes === 'undefined') {
-		bytes = Math.ceil(Math.log(data + 1) / Math.log(16) / 2);
+		bytes = data.toBytes().length;//Math.ceil(Math.log(data.add(1).toInt()) / Math.log(16) / 2);
 	}
 	for (i = 0; i < bytes; i++){
-		MEMORY[addr + i] = data & 0xFF;
-		data = data >> 8;
+		MEMORY[addr + i] = data.and(0xFF);
+		data = data.shiftRight(8);
 	}
 	return addr;
 }
@@ -81,17 +100,38 @@ function DECODE (bytearr) {
 		args['rA'] = (bytearr[1] >> 4) & 0x0F;
 		args['rB'] = bytearr[1] & 0x0F;
 	}
-	if (len === 5) {
-		var temp = bytearr[1];
-		temp |= bytearr[2] << 8;
-		temp |= bytearr[3] << 16;
-		temp |= bytearr[4] << 24;
+	if (len === 9) {
+		var temp = new Long(0,0,true);
+		/*var tempStr = "0x";
+		for (var i = 1; i < 9; i++) {
+			tempStr += padHex(bytearr[i],2);
+		}
+		temp = new Long(tempStr);
+
+		*/
+		temp = temp.or(bytearr[1]);
+		temp = temp.or(bytearr[2] << 8);
+		temp = temp.or(bytearr[3] << 16);
+		temp = temp.or(bytearr[4] << 24);
+
+		temp = temp.or(bytearr[4] << 32);
+		temp = temp.or(bytearr[5] << 40);
+		temp = temp.or(bytearr[6] << 48);
+		temp = temp.or(bytearr[7] << 56);
+		temp = temp.or(bytearr[8] << 64);
 		args['Dest'] = temp;
-	} else if (len === 6) {
-		var temp = bytearr[2];
-		temp |= bytearr[3] << 8;
-		temp |= bytearr[4] << 16;
-		temp |= bytearr[5] << 24;
+
+		console.log(temp,bytearr);
+	} else if (len === 10) {
+		var temp = new Long(bytearr[2]);
+		temp = temp.or(bytearr[3] << 8);
+		temp = temp.or(bytearr[4] << 16);
+		temp = temp.or(bytearr[5] << 24);
+
+		temp = temp.or(bytearr[4] << 32);
+		temp = temp.or(bytearr[5] << 40);
+		temp = temp.or(bytearr[6] << 48);
+		temp = temp.or(bytearr[7] << 56);
 		args['D'] = temp;
 		args['V'] = temp;
 	}
@@ -118,11 +158,12 @@ function evalArgs(list, args, symbols){
 		}
 		else if (item === 'V' || item === 'D') {
 			if (symbols.hasOwnProperty(args[i])) {
-				result['V'] = toBigEndian(padHex(symbols[args[i]], 8));
+				result['V'] = toBigEndian(padHex(symbols[args[i]], 16));
 				result['D'] = result['V'];
 			} else {
 				try {
-					result['V'] = toBigEndian(padHex(parseNumberLiteral(args[i].replace('$', '')) >>> 0, 8));
+					result['V'] = toBigEndian(padHex(parseNumberLiteral(args[i].replace('$', '')) >>> 0, 16));
+					console.log(args[i].replace('$', ''));
 				} catch (e) {
 					// Use 'not a symbol' instead of the more cryptic 'not a number'
 					throw new Error('Undefined symbol: ' + args[i]);
@@ -131,7 +172,8 @@ function evalArgs(list, args, symbols){
 			}
 		} else if (item === 'Dest') {
 			try {
-				result['Dest'] = toBigEndian(padHex(symbols[args[i]].toString(16), 8));	
+				result['Dest'] = toBigEndian(padHex(symbols[args[i]], 16));	
+				//console.log("0x"+(result['Dest'])+": "+args[i]);
 			} catch (e) {
 				throw new Error('Undefined symbol: ' + args[i]);
 			}
@@ -142,7 +184,7 @@ function evalArgs(list, args, symbols){
 		    var T = patt.test(args[i]); // test if parentheses are used or not
 		    var D = args[i].replace(patt, '$1');
 		    if (symbols.hasOwnProperty(D)) D = symbols[D]; // if D is a symbol, get its value
-		    result['D'] = toBigEndian(padHex(parseNumberLiteral(D) >>> 0, 8)); // D will be zero if unused
+		    result['D'] = toBigEndian(padHex(parseNumberLiteral(D) >>> 0, 16)); // D will be zero if unused
 		    
 		    if(T) { /* rB used */
 			var R = args[i].replace(patt, '$2');		    
@@ -161,7 +203,6 @@ function ENCODE(instr, symbols) {
 		args = [],
 		vars = {},
 		icode;
-
 	instr = instr.replace(/\s*,\s*/i, ',');
 	args = instr.split(' ');
 	instr = args.splice(0, 1)[0];
@@ -174,10 +215,14 @@ function ENCODE(instr, symbols) {
 	}
 	
 	if (icode in ASSEM) {
+		//if(icode == 7){
+		//	console.log(vars);
+		//}
 		result = ASSEM[icode].call(vars);
 	} else {
 		throw new Error('Invalid instruction "' + instr + '"');
 	}
+
 	return result;
 }
 
@@ -247,8 +292,8 @@ function ASSEMBLE (raw, errorsOnly) {
 					errors.push([i + 1, e.message]);
 				}
 				counter = Math.ceil(counter / alignTo) * alignTo;
-			} else if (dir[1] === '.long') {
-				counter += 4;
+			} else if (dir[1] === '.quad') {
+				counter += 8;
 			} else {
 				errors.push([i + 1, 'Unknown directive: ' + dir[1]]);
 			}
@@ -269,7 +314,7 @@ function ASSEMBLE (raw, errorsOnly) {
 			return;
 
 		// Long directives
-		dir = line.match(/^\.long (.*)/i);
+		dir = line.match(/^\.quad (.*)/i);
 		if (dir) {
 			var value;
 			try {
@@ -280,9 +325,9 @@ function ASSEMBLE (raw, errorsOnly) {
 				if (symbols.hasOwnProperty(dir[1]))
 					value = symbols[dir[1]];
 				else
-					errors.push([i + 1, 'Error while parsing .long directive: undefined symbol ' + dir[1]]);
+					errors.push([i + 1, 'Error while parsing .quad directive: undefined symbol ' + dir[1]]);
 			}
-			result[i][1] = toBigEndian(padHex(value >>> 0, 8));
+			result[i][1] = toBigEndian(padHex(value >>> 0, 16));
 			counter += 4;
 			return;
 		}
@@ -302,8 +347,9 @@ function ASSEMBLE (raw, errorsOnly) {
 		}
 	});
 
-	if (errorsOnly)
+	if (errorsOnly){
 		return { errors: errors }
+	}
 
 	var objectCode = _.map(result, function (line) {
 		// 0xXXXX: XXXXXX...
@@ -311,8 +357,8 @@ function ASSEMBLE (raw, errorsOnly) {
 		if (line[0].length)
 			compiledPart += line[0] + ': ' + line[1];
 		
-		// pad to fit 22 characters
-		var padding = new Array(24 - compiledPart.length).join(' ');
+		// pad to fit 28 characters
+		var padding = new Array(32 - compiledPart.length).join(' ');
 
 		return compiledPart + padding + '| ' + line[2];
 	}).join('\n');
@@ -336,7 +382,7 @@ var STEP_INTERVAL = null, RUN_DONE_CALLBACK;
 // Run 256 instructions
 function RUN_STEP () {
 	for (var i = 0; i < 256; i++) {
-		if (PC < MEM_SIZE && STAT === 'AOK')
+		if (PC.lessThan(MEM_SIZE) && STAT === 'AOK')
 			STEP();
 		else {
 			PAUSE();
@@ -368,18 +414,22 @@ function RUN (cb) {
 		STAT = 'AOK';
 
 	// Use fastest available interval the browser can provide
-	STEP_INTERVAL = setInterval(RUN_STEP, 0);
+	STEP_INTERVAL = setInterval(RUN_STEP, 500);
 	RUN_DONE_CALLBACK = cb;
 }
 
 // TODO: eventually, this will become a five-part pipeline
 function STEP () {
 	// Fetch
-	var icode = MEMORY[PC] >> 4;
+	var icode = MEMORY[PC.toInt()] >> 4;
 	var ilen = INSTRUCTION_LEN[icode];
-	var instr = MEMORY.slice(PC, PC + ilen);
+	var instr = MEMORY.slice(PC.toInt(), PC.add(ilen).toInt());
 
-	PC += ilen;
+	if(icode == 7){
+		console.log(icode,ilen,instr);
+	}
+
+	PC = PC.add(ilen);
 
 	// Decode
 	var args = DECODE(instr);
@@ -410,7 +460,7 @@ function toByteArray(str) {
 	// Set instructions at correct locations
 	for (i in lines) {
 		line = lines[i];
-		match = line.match(/\s*(0x([0-9a-f]+):\s*)?([0-9a-f]*)\s*\|.*/i);
+		match = line.match(/\s*(0x([0-9a-fA-F]+):\s*)?([0-9a-fA-F]*)\s*\|.*/i);
 		if (!match) {
 			throw 'Invalid instruction format on line ' + i + ': "' + lines[i] + '"';
 		}
@@ -420,6 +470,7 @@ function toByteArray(str) {
 			addr = parseInt(match[2], 16);
 			for (var i = 0; i < instr.length; i++) {
 				bytearr[addr + i] = instr[i];
+				//console.log(match[2],instr[i].toString(16),i);
 			}
 		}
 	}
