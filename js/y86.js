@@ -162,8 +162,7 @@ function evalArgs(list, args, symbols){
 				result['D'] = result['V'];
 			} else {
 				try {
-					result['V'] = toBigEndian(padHex(parseNumberLiteral(args[i].replace('$', '')) >>> 0, 16));
-					console.log(args[i].replace('$', ''));
+					result['V'] = toBigEndian(padHex(parseNumberLiteral(args[i].replace('$', '')), 16));
 				} catch (e) {
 					// Use 'not a symbol' instead of the more cryptic 'not a number'
 					throw new Error('Undefined symbol: ' + args[i]);
@@ -184,14 +183,14 @@ function evalArgs(list, args, symbols){
 		    var T = patt.test(args[i]); // test if parentheses are used or not
 		    var D = args[i].replace(patt, '$1');
 		    if (symbols.hasOwnProperty(D)) D = symbols[D]; // if D is a symbol, get its value
-		    result['D'] = toBigEndian(padHex(parseNumberLiteral(D) >>> 0, 16)); // D will be zero if unused
+		    result['D'] = toBigEndian(padHex(parseNumberLiteral(D), 16)); // D will be zero if unused
 		    
 		    if(T) { /* rB used */
-			var R = args[i].replace(patt, '$2');		    
-			result['rB'] = getRegCode(R);
+				var R = args[i].replace(patt, '$2');		    
+				result['rB'] = getRegCode(R);
 		    }
 		    else { /* rB unused */
-			result['rB'] = 'f';
+				result['rB'] = 'f';
 		    }
 		}
 	}
@@ -281,13 +280,13 @@ function ASSEMBLE (raw, errorsOnly) {
 		if (dir) {
 			if (dir[1] === '.pos') {
 				try {
-					counter = parseNumberLiteral(dir[2]);
+					counter = parseNumberLiteral(dir[2]).toInt();
 				} catch (e) {
 					errors.push([i + 1, e.message]);
 				}
 			} else if (dir[1] === '.align') {
 				try {
-					var alignTo = parseNumberLiteral(dir[2]);
+					var alignTo = parseNumberLiteral(dir[2]).toInt();
 				} catch (e) {
 					errors.push([i + 1, e.message]);
 				}
@@ -414,7 +413,7 @@ function RUN (cb) {
 		STAT = 'AOK';
 
 	// Use fastest available interval the browser can provide
-	STEP_INTERVAL = setInterval(RUN_STEP, 500);
+	STEP_INTERVAL = setInterval(RUN_STEP, 0);
 	RUN_DONE_CALLBACK = cb;
 }
 

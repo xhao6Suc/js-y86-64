@@ -233,6 +233,10 @@ html, body {
 
 .registers .register_column {
 	width: 70%;
+	height: 200px;
+	min-width: 250px;
+    overflow-y: scroll;
+    margin-right:20px;
 }
 
 .registers .label {
