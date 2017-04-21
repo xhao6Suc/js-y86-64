@@ -16,7 +16,6 @@ var ASSEM = [];
 	};
 
 	ASSEM[3] = function () {
-		console.log(this.V);
 		return '30f' + this.rB + padq(this.V);
 	};
 

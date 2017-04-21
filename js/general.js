@@ -180,11 +180,12 @@ function hexstr2num(h){
 function parseNumberLiteral (str) {
 	if (isNaN(str))
 		throw new Error('Not a number: ' + str);
-	return new Long(str);
-	//else if (str.length > 2 && str.substr(0, 2) === '0x')
-	//	return parseInt(str, 16);
-	//else
-	//	return parseInt(str, 10);
+	else if (str.length > 2 && str.substr(0, 2) === '0x')
+		return Long.fromString(str,true,16);
+		//return parseInt(str, 16);
+	else
+		return new Long(str);
+		//return parseInt(str, 10);
 }
 
 function padHex(num, width){

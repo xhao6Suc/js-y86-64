@@ -71,18 +71,18 @@ INSTR[6] = function () { // op
 	var valA = getRegister(this.rA),
 		valB = getRegister(this.rB),
 		sgnA, sgnB, sgnR;
+
+	sgnA = !!(valA.toBytes()[0] == 0xFF);
+	sgnB = !!(valB.toBytes()[0] == 0xFF);
+
 	switch(this.fn) {
 		case 0:
-			sgnA = !!(valA.toBytes()[0] == 0xFF);
-			sgnB = !!(valB.toBytes()[0] == 0xFF);
 			REG[this.rB] = REG[this.rB].add(getRegister(this.rA));
 			sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
 			OF = +(sgnA && sgnB && !sgnR ||
 			       !sgnA && !sgnB && sgnR)
 			break;
 		case 1:
-			sgnA = !!(valA.toBytes()[0] == 0xFF);
-			sgnB = !!(valB.toBytes()[0] == 0xFF);
 			REG[this.rB] = REG[this.rB].subtract(getRegister(this.rA));
 			sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
 			OF = +(sgnA && sgnB && !sgnR ||

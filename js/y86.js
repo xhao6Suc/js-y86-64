@@ -55,19 +55,16 @@ function RESET() {
 // Load
 function LD (addr, mem) {
 	mem = mem || MEMORY;
-	var result = new Long();
+	var result = new Long(0,0,true);
 	if (addr < 0 || addr + 8 > MEM_SIZE) {
 		STAT = 'ADR';
 		throw new Error("Invalid address 0x" + addr.toString(16));
 	}
-	result = new Long(mem[addr]);
-	result = result.or(mem[addr + 1] << 8);
-	result = result.or(mem[addr + 2] << 16);
-	result = result.or(mem[addr + 3] << 24);
-	result = result.or(mem[addr + 4] << 32);
-	result = result.or(mem[addr + 5] << 40);
-	result = result.or(mem[addr + 6] << 48);
-	result = result.or(mem[addr + 7] << 56);
+	for (var i = 0; i < 8; i++) {
+		var tempMem = new Long(mem[addr + i]);
+		result = result.or(tempMem.shiftLeft(i*8));
+	}
+
 	return result;
 }
 
@@ -102,13 +99,6 @@ function DECODE (bytearr) {
 	}
 	if (len === 9) {
 		var temp = new Long(0,0,true);
-		/*var tempStr = "0x";
-		for (var i = 1; i < 9; i++) {
-			tempStr += padHex(bytearr[i],2);
-		}
-		temp = new Long(tempStr);
-
-		*/
 		temp = temp.or(bytearr[1]);
 		temp = temp.or(bytearr[2] << 8);
 		temp = temp.or(bytearr[3] << 16);
@@ -121,7 +111,8 @@ function DECODE (bytearr) {
 		temp = temp.or(bytearr[8] << 64);
 		args['Dest'] = temp;
 	} else if (len === 10) {
-		var temp = new Long(bytearr[2]);
+		var temp = new Long(0,0,true);
+		temp = temp.or(bytearr[2]);
 		temp = temp.or(bytearr[3] << 8);
 		temp = temp.or(bytearr[4] << 16);
 		temp = temp.or(bytearr[5] << 24);
@@ -170,7 +161,6 @@ function evalArgs(list, args, symbols){
 		} else if (item === 'Dest') {
 			try {
 				result['Dest'] = toBigEndian(padHex(symbols[args[i]], 16));	
-				//console.log("0x"+(result['Dest'])+": "+args[i]);
 			} catch (e) {
 				throw new Error('Undefined symbol: ' + args[i]);
 			}
@@ -212,9 +202,6 @@ function ENCODE(instr, symbols) {
 	}
 	
 	if (icode in ASSEM) {
-		//if(icode == 7){
-		//	console.log(vars);
-		//}
 		result = ASSEM[icode].call(vars);
 	} else {
 		throw new Error('Invalid instruction "' + instr + '"');
@@ -324,8 +311,8 @@ function ASSEMBLE (raw, errorsOnly) {
 				else
 					errors.push([i + 1, 'Error while parsing .quad directive: undefined symbol ' + dir[1]]);
 			}
-			result[i][1] = toBigEndian(padHex(value >>> 0, 16));
-			counter += 4;
+			result[i][1] = toBigEndian(padHex(value.toString(16), 16));
+			counter += 8;
 			return;
 		}
 
