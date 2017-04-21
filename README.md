@@ -1,8 +1,9 @@
-# js-y86-64 -> work in progress
+# js-y86-64 (work in progress)
+[![Preview of simulator](http://image.prntscr.com/image/707876839daf4899a2401546b77f07ce.png)](https://boginw.github.io/js-y86-64/)
 
-js-y86-64 is an assembler and simulator written in Javascript. It supports:
+**js-y86-64** is an assembler and simulator written in Javascript. It supports:
 
-* All of the original y86-64 instructions plus cmovX
+* All of the original Y86-64 instructions plus cmovX
 * Breakpoints via `brk`
 * Step-by-step execution
 * Inspect the contents of the registers, flags, and memory after every instruction
@@ -10,9 +11,9 @@ js-y86-64 is an assembler and simulator written in Javascript. It supports:
 * Syntax highlighting
 * See your (hopefully useful) compile errors as you type
 
-[See it in action](https://boginw.github.io/js-y86-64/) or [read the documentation on the Wiki](https://github.com/xsznix/js-y86-64/wiki).
+[See it in action](https://boginw.github.io/js-y86-64/) or [read the documentation on the Wiki](https://github.com/boginw/js-y86-64/wiki).
 
-This repo is forked from [xsznix](https://github.com/xsznix/js-y86).
+This repo is forked from [xsznix](https://github.com/xsznix/js-y86), which is built around [vagulars](https://github.com/vaguilar/js-y86) assembler. This project extends both previous repos with support for Y86-**64**. Although most browsers don't support 64-bit integers, we make use of [long.js](https://github.com/dcodeIO/long.js) in order to achive 64-bit (although it doesn't make your programs run faster, quite the contrary).
 
 ## License
 
