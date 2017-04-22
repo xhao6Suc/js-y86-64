@@ -1,6 +1,6 @@
 // Constants
 var MEM_SIZE = 0x2000;
-var REG_COUNT = 16;
+var REG_COUNT = 15;
 
 // Registers and memory
 var PC 		= new Long(0),
@@ -99,28 +99,19 @@ function DECODE (bytearr) {
 	}
 	if (len === 9) {
 		var temp = new Long(0,0,true);
-		temp = temp.or(bytearr[1]);
-		temp = temp.or(bytearr[2] << 8);
-		temp = temp.or(bytearr[3] << 16);
-		temp = temp.or(bytearr[4] << 24);
 
-		temp = temp.or(bytearr[4] << 32);
-		temp = temp.or(bytearr[5] << 40);
-		temp = temp.or(bytearr[6] << 48);
-		temp = temp.or(bytearr[7] << 56);
-		temp = temp.or(bytearr[8] << 64);
+		for (var i = 0; i < 8; i++) {
+			var tempMem = new Long(bytearr[i+1]);
+			temp = temp.or(tempMem.shiftLeft(i*8));
+		}
 		args['Dest'] = temp;
 	} else if (len === 10) {
 		var temp = new Long(0,0,true);
-		temp = temp.or(bytearr[2]);
-		temp = temp.or(bytearr[3] << 8);
-		temp = temp.or(bytearr[4] << 16);
-		temp = temp.or(bytearr[5] << 24);
 
-		temp = temp.or(bytearr[4] << 32);
-		temp = temp.or(bytearr[5] << 40);
-		temp = temp.or(bytearr[6] << 48);
-		temp = temp.or(bytearr[7] << 56);
+		for (var i = 0; i < 8; i++) {
+			var tempMem = new Long(bytearr[i+2]);
+			temp = temp.or(tempMem.shiftLeft(i*8));
+		}
 		args['D'] = temp;
 		args['V'] = temp;
 	}
@@ -165,16 +156,17 @@ function evalArgs(list, args, symbols){
 				throw new Error('Undefined symbol: ' + args[i]);
 			}
 		} else if (item === 'D(rB)') {
-
 		    // improve syntax to allow D(rB), D and (rB) with D as symbol or number.
 		    var patt = /^(.*)\((.*)\)$/;
 		    var T = patt.test(args[i]); // test if parentheses are used or not
 		    var D = args[i].replace(patt, '$1');
+		    D = D.length ? D : "0";
+
 		    if (symbols.hasOwnProperty(D)) D = symbols[D]; // if D is a symbol, get its value
 		    result['D'] = toBigEndian(padHex(parseNumberLiteral(D), 16)); // D will be zero if unused
 		    
 		    if(T) { /* rB used */
-				var R = args[i].replace(patt, '$2');		    
+				var R = args[i].replace(patt, '$2');	    
 				result['rB'] = getRegCode(R);
 		    }
 		    else { /* rB unused */

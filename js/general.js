@@ -182,10 +182,8 @@ function parseNumberLiteral (str) {
 		throw new Error('Not a number: ' + str);
 	else if (str.length > 2 && str.substr(0, 2) === '0x')
 		return Long.fromString(str,true,16);
-		//return parseInt(str, 16);
 	else
-		return new Long(str);
-		//return parseInt(str, 10);
+		return Long.fromString(str,true,10);
 }
 
 function padHex(num, width){

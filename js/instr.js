@@ -52,7 +52,11 @@ INSTR[2] = function () {
 	}
 };
 INSTR[3] = function () {
-	REG[this.rB] = new Long(this.V);
+	if(typeof(this.V) == "object"){
+		REG[this.rB] = this.V;
+	}else{
+		REG[this.rB] = new Long(this.V);
+	}
 };
 INSTR[4] = function () {
         var valA = getRegister(this.rA);
