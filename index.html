@@ -254,7 +254,7 @@ stack:
 
         // Don't lose unsaved work!
         window.onbeforeunload = function () {
-            return 'All unsaved work will be lost!';
+            localStorage.y86_64_sim_src = editor.getSource();
         }
     </script>
   </body>

@@ -8,6 +8,7 @@ var AppView = Backbone.View.extend({
 		this.listenTo(Backbone.Events, 'app:redraw', this.redrawButtons);
 
 		this.render();
+		editor = this.editor;
 	},
 
 	events: {

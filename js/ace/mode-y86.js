@@ -11,10 +11,10 @@ define("ace/mode/y86_highlight_rules",
 		this.$rules = {
 			"start" : [{
 				"token": "comment",
-				"regex": /#.*/
+				"regex": /#.*|;./
 			}, {
 				"token": ["storage.type", "directive"],
-				"regex": /\.(?:pos|align|long)/
+				"regex": /\.(?:pos|align|quad|long|double|byte)/
 			}, {
 				"token": ["entity.name.function", "symbol"],
 				"regex": /\w+:/

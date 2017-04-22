@@ -8,7 +8,7 @@ var EditorView = Backbone.View.extend({
 
 	render: function () {
 		this.$el.empty().append(this.template({
-			code: $('#default_y86_code').html()
+			code: localStorage.y86_64_sim_src || $('#default_y86_code').html()
 		}));
 
 		this.$editor = this.$('.code');

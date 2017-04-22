@@ -10,6 +10,13 @@ var PC 		= new Long(0),
 	SF = 0, ZF = 0, OF = 0,
 	ERR = '';
 
+var WORDS = {
+	byte: 8,
+	double: 16,
+	long: 32,
+	quad: 64
+};
+
 function longArray(length){
 	var longArr = new Array(length);
 	for (var i = 0; i < length; i++) {
@@ -272,6 +279,12 @@ function ASSEMBLE (raw, errorsOnly) {
 				counter = Math.ceil(counter / alignTo) * alignTo;
 			} else if (dir[1] === '.quad') {
 				counter += 8;
+			} else if (dir[1] === '.long') {
+				counter += 4;
+			} else if (dir[1] === '.double') {
+				counter += 4;
+			} else if (dir[1] === '.byte') {
+				counter += 1;
 			} else {
 				errors.push([i + 1, 'Unknown directive: ' + dir[1]]);
 			}
@@ -292,21 +305,21 @@ function ASSEMBLE (raw, errorsOnly) {
 			return;
 
 		// Long directives
-		dir = line.match(/^\.quad (.*)/i);
+		dir = line.match(/^\.(quad|long|double|byte) (.*)/i);
 		if (dir) {
 			var value;
 			try {
 				// Try to parse the value as a number literal first...
-				value = parseNumberLiteral(dir[1]);
+				value = parseNumberLiteral(dir[2]);
 			} catch (e) {
 				// ...and if that fails, try to find it in the symbol table
-				if (symbols.hasOwnProperty(dir[1]))
-					value = symbols[dir[1]];
+				if (symbols.hasOwnProperty(dir[2]))
+					value = symbols[dir[2]];
 				else
-					errors.push([i + 1, 'Error while parsing .quad directive: undefined symbol ' + dir[1]]);
+					errors.push([i + 1, `Error while parsing .${dir[1]} directive: undefined symbol ${dir[2]}`]);
 			}
-			result[i][1] = toBigEndian(padHex(value.toString(16), 16));
-			counter += 8;
+			result[i][1] = toBigEndian(padHex(value.toString(16), WORDS[dir[1] / 4]));
+			counter += WORDS[dir[1] / 8];
 			return;
 		}
 
