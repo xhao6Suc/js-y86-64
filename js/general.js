@@ -12,7 +12,7 @@ var INSTRUCTION_LEN = [
 	    1,		//  9:ret
 	    2,		// 10:push
 	    2,		// 11:pop
-	    9,		// 12:iop
+	    10,		// 12:iop
 	    1,		// 13:
 	    1,		// 14:
 	    1		// 15:brk
