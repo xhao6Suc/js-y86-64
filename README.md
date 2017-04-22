@@ -1,5 +1,5 @@
-# js-y86-64 (work in progress)
-[![Preview of simulator](http://image.prntscr.com/image/707876839daf4899a2401546b77f07ce.png)](https://boginw.github.io/js-y86-64/)
+# js-y86-64
+[![Preview of simulator](http://image.prntscr.com/image/414ee45420ac40b9a6f30a35e1a7aebd.png)](https://boginw.github.io/js-y86-64/)
 
 **js-y86-64** is an assembler and simulator written in Javascript. It supports:
 
