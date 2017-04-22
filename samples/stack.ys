@@ -1,7 +1,7 @@
 .pos 0
 Init:
-	irmovl Stack, %ebp
-	irmovl Stack, %esp
+	irmovq Stack, %rbp
+	irmovq Stack, %rsp
 	jmp Main
 
 .pos 0x100
@@ -17,21 +17,21 @@ Main:
 
 	# One argument call
 	brk
-	irmovl $1, %ebx
-	pushl %ebx
+	irmovq $1, %rbx
+	pushq %rbx
 	call OneArgs
-	rrmovl %ebp, %esp
+	rrmovq %rbp, %rsp
 
 	call ResetRegisters
 
 	# Two argument call
 	brk
-	irmovl $3, %esi
-	irmovl $2, %edi
-	pushl %edi
-	pushl %esi
+	irmovq $3, %rsi
+	irmovq $2, %rdi
+	pushq %rdi
+	pushq %rsi
 	call TwoArgs
-	rrmovl %ebp, %esp
+	rrmovq %rbp, %rsp
 
 	call ResetRegisters
 
@@ -41,111 +41,111 @@ Main:
 
 	call ResetRegisters
 
-	# Caller save -- watch the values of %ecx and %edx! Here, we set them to
+	# Caller save -- watch the values of %rcx and %rdx! Here, we set them to
 	# 1 and 2, but CallerSave will modify them.
 	brk
-	irmovl $1, %ecx
-	irmovl $2, %edx
-	pushl %ecx  # To retain the current register values, push them onto the stack.
-	pushl %edx
-	call CallerSave  # Callee is free to modify %ecx and %edx.
-	popl %edx
-	popl %ecx  # To get our old register values back, pop them off the stack.
+	irmovq $1, %rcx
+	irmovq $2, %rdx
+	pushq %rcx  # To retain the current register values, push them onto the stack.
+	pushq %rdx
+	call CallerSave  # Callee is free to modify %rcx and %rdx.
+	popq %rdx
+	popq %rcx  # To get our old register values back, pop them off the stack.
 
 	call ResetRegisters
 
-	# Callee save -- watch the value of %ebx!
+	# Callee save -- watch the value of %rbx!
 	brk
-	irmovl $9001, %ebx
+	irmovq $9001, %rbx
 	call CalleeSave
-	nop # Immediately after returning, our value of %ebx is what we had it as before.
+	nop # Immediately after returning, our value of %rbx is what we had it as before.
 
 	halt
 
 ResetRegisters:
-	xorl %eax, %eax
-	xorl %ebx, %ebx
-	xorl %ecx, %ecx
-	xorl %edx, %edx
-	xorl %esi, %esi
-	xorl %edi, %edi
+	xorq %rax, %rax
+	xorq %rbx, %rbx
+	xorq %rcx, %rcx
+	xorq %rdx, %rdx
+	xorq %rsi, %rsi
+	xorq %rdi, %rdi
 	ret
 
 # Creates a new stack frame and destroys it.
 ZeroArgs:
-	pushl %ebp
-	rrmovl %esp, %ebp
+	pushq %rbp
+	rrmovq %rsp, %rbp
 
-	rrmovl %ebp, %esp
-	popl %ebp
+	rrmovq %rbp, %rsp
+	popq %rbp
 	ret
 
 # Returns the argument passed.
 OneArgs:
-	pushl %ebp
-	rrmovl %esp, %ebp
+	pushq %rbp
+	rrmovq %rsp, %rbp
 
-	mrmovl 8(%ebp), %eax  # Puts the first argument in %eax to return.
+	mrmovq 8(%rbp), %rax  # Puts the first argument in %rax to return.
 
-	rrmovl %ebp, %esp
-	popl %ebp
+	rrmovq %rbp, %rsp
+	popq %rbp
 	ret
 
 # Subtracts the second argument from the first argument.
 TwoArgs:
-	pushl %ebp
-	rrmovl %esp, %ebp
+	pushq %rbp
+	rrmovq %rsp, %rbp
 
-	mrmovl 8(%ebp), %eax   # First argument
-	mrmovl 12(%ebp), %edx  # Second argument
+	mrmovq 8(%rbp), %rax   # First argument
+	mrmovq 12(%rbp), %rdx  # Second argument
 
-	subl %edx, %eax        # eax = eax - edx
+	subq %rdx, %rax        # eax = eax - edx
 	
-	rrmovl %ebp, %esp
-	popl %ebp
+	rrmovq %rbp, %rsp
+	popq %rbp
 	ret
 
 # Creates 15 local variables on the stack, then returns 0.
 LocalVars:
-	pushl %ebp
-	rrmovl %esp, %ebp
+	pushq %rbp
+	rrmovq %rsp, %rbp
 
-	irmovl $15, %eax
-	irmovl $1, %ebx
+	irmovq $15, %rax
+	irmovq $1, %rbx
 
 LocalVars_Loop:
-	pushl %eax
-	subl %ebx, %eax
+	pushq %rax
+	subq %rbx, %rax
 	jne LocalVars_Loop
 
 LocalVars_End:
-	rrmovl %ebp, %esp
-	popl %ebp
+	rrmovq %rbp, %rsp
+	popq %rbp
 	ret
 
-# Caller-save register demonstration. Mangles %ecx and %edx and returns 7.
+# Caller-save register demonstration. Mangles %rcx and %rdx and returns 7.
 CallerSave:
-	pushl %ebp
-	rrmovl %esp, %ebp
+	pushq %rbp
+	rrmovq %rsp, %rbp
 
-	irmovl $3, %ecx
-	irmovl $4, %edx
-	addl %ecx, %edx
-	rrmovl %edx, %eax
+	irmovq $3, %rcx
+	irmovq $4, %rdx
+	addq %rcx, %rdx
+	rrmovq %rdx, %rax
 
-	rrmovl %ebp, %esp
-	popl %ebp
+	rrmovq %rbp, %rsp
+	popq %rbp
 	ret
 
-# Callee-save register demonstration. Changes %ebx, but restores it.
+# Callee-save register demonstration. Changes %rbx, but restores it.
 CalleeSave:
-	pushl %ebp
-	rrmovl %esp, %ebp
-	pushl %ebx  # Save old register value, since it's callee-save.
+	pushq %rbp
+	rrmovq %rsp, %rbp
+	pushq %rbx  # Save old register value, since it's callee-save.
 
-	irmovl $-9001, %ebx
+	irmovq $-9001, %rbx
 
-	popl %ebx  # Restore old register value.
-	rrmovl %ebp, %esp
-	popl %ebp
+	popq %rbx  # Restore old register value.
+	rrmovq %rbp, %rsp
+	popq %rbp
 	ret
