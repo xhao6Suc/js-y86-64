@@ -115,81 +115,84 @@ stack:
     <script type="text/template" id="tmpl_registers">
         <div class="column register_column">
             <h3>Registers</h3>
-            <div class="register">
-                <div class="label">%rax</div>
-                <div class="value_hex"><%= rax_hex %></div>
-                <div class="value_dec"><%= rax_dec %></div>
+            <div class="register_holder">
+                <div class="register">
+                    <div class="label">%rax</div>
+                    <div class="value_hex"><%= rax_hex %></div>
+                    <div class="value_dec"><%= rax_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%rcx</div>
+                    <div class="value_hex"><%= rcx_hex %></div>
+                    <div class="value_dec"><%= rcx_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%rdx</div>
+                    <div class="value_hex"><%= rdx_hex %></div>
+                    <div class="value_dec"><%= rdx_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%rbx</div>
+                    <div class="value_hex"><%= rbx_hex %></div>
+                    <div class="value_dec"><%= rbx_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%rsp</div>
+                    <div class="value_hex"><%= rsp_hex %></div>
+                    <div class="value_dec"><%= rsp_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%rbp</div>
+                    <div class="value_hex"><%= rbp_hex %></div>
+                    <div class="value_dec"><%= rbp_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%rsi</div>
+                    <div class="value_hex"><%= rsi_hex %></div>
+                    <div class="value_dec"><%= rsi_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%rdi</div>
+                    <div class="value_hex"><%= rdi_hex %></div>
+                    <div class="value_dec"><%= rdi_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%r8</div>
+                    <div class="value_hex"><%= r8_hex %></div>
+                    <div class="value_dec"><%= r8_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%r9</div>
+                    <div class="value_hex"><%= r9_hex %></div>
+                    <div class="value_dec"><%= r9_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%r10</div>
+                    <div class="value_hex"><%= r10_hex %></div>
+                    <div class="value_dec"><%= r10_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%r11</div>
+                    <div class="value_hex"><%= r11_hex %></div>
+                    <div class="value_dec"><%= r11_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%r12</div>
+                    <div class="value_hex"><%= r12_hex %></div>
+                    <div class="value_dec"><%= r12_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%r13</div>
+                    <div class="value_hex"><%= r13_hex %></div>
+                    <div class="value_dec"><%= r13_dec %></div>
+                </div>
+                <div class="register">
+                    <div class="label">%r14</div>
+                    <div class="value_hex"><%= r14_hex %></div>
+                    <div class="value_dec"><%= r14_dec %></div>
+                </div>
             </div>
-            <div class="register">
-                <div class="label">%rcx</div>
-                <div class="value_hex"><%= rcx_hex %></div>
-                <div class="value_dec"><%= rcx_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%rdx</div>
-                <div class="value_hex"><%= rdx_hex %></div>
-                <div class="value_dec"><%= rdx_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%rbx</div>
-                <div class="value_hex"><%= rbx_hex %></div>
-                <div class="value_dec"><%= rbx_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%rsp</div>
-                <div class="value_hex"><%= rsp_hex %></div>
-                <div class="value_dec"><%= rsp_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%rbp</div>
-                <div class="value_hex"><%= rbp_hex %></div>
-                <div class="value_dec"><%= rbp_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%rsi</div>
-                <div class="value_hex"><%= rsi_hex %></div>
-                <div class="value_dec"><%= rsi_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%rdi</div>
-                <div class="value_hex"><%= rdi_hex %></div>
-                <div class="value_dec"><%= rdi_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%r8</div>
-                <div class="value_hex"><%= r8_hex %></div>
-                <div class="value_dec"><%= r8_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%r9</div>
-                <div class="value_hex"><%= r9_hex %></div>
-                <div class="value_dec"><%= r9_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%r10</div>
-                <div class="value_hex"><%= r10_hex %></div>
-                <div class="value_dec"><%= r10_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%r11</div>
-                <div class="value_hex"><%= r11_hex %></div>
-                <div class="value_dec"><%= r11_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%r12</div>
-                <div class="value_hex"><%= r12_hex %></div>
-                <div class="value_dec"><%= r12_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%r13</div>
-                <div class="value_hex"><%= r13_hex %></div>
-                <div class="value_dec"><%= r13_dec %></div>
-            </div>
-            <div class="register">
-                <div class="label">%r14</div>
-                <div class="value_hex"><%= r14_hex %></div>
-                <div class="value_dec"><%= r14_dec %></div>
-            </div>
+
         </div>
         <div class="column status_column">
             <h3>Flags</h3>

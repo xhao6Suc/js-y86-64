@@ -337,7 +337,7 @@ function ASSEMBLE (raw, errorsOnly) {
 
 	var objectCode = _.map(result, function (line) {
 		// 0xXXXX: XXXXXX...
-		var compiledPart = '  ';
+		var compiledPart = '';
 		if (line[0].length)
 			compiledPart += line[0] + ': ' + line[1];
 		

@@ -233,9 +233,7 @@ html, body {
 
 .registers .register_column {
 	width: 70%;
-	height: 200px;
 	min-width: 250px;
-    overflow-y: scroll;
     margin-right:20px;
 }
 
@@ -417,6 +415,33 @@ h3.status_header {
 	right: 5px;
 
 	color: #16a085;
+}
+
+.register_holder{
+	height: 200px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: #CCC;
+}
+ 
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.2); 
+}
+ 
+::-webkit-scrollbar-button {
+	height: 0px;
+	background-color: #CCC;
+}
+ 
+::-webkit-scrollbar-corner {
+	background-color: black;
 }
 
 @media screen and (max-width: 1023px) {
