@@ -28,7 +28,7 @@ var MemoryView = Backbone.View.extend({
 			this.resize();
 
 			// Widen the memory panel if there's a scroll bar.
-			var width = 415 - this.$('.stack-pointers').width()
+			var width = 385 - this.$('.stack-pointers').width();
 			this.$el.width(width);
 			this.$el.parent().width(width);
 		}.bind(this), 0);
@@ -62,8 +62,8 @@ var MemoryView = Backbone.View.extend({
 	},
 
 	updateStackPointers: function () {
-		var rbp = REG[5] / 10 * 15;
-		var rsp = REG[4] / 10 * 15;
+		var rbp = REG[5] / 8 * 15;
+		var rsp = REG[4] / 8 * 15;
 		var old_rbp = this.$rbp.position().top;
 		var old_rsp = this.$rsp.position().top;
 		var rbp_changed = false, rsp_changed = false;
@@ -130,7 +130,7 @@ var MemWordView = Backbone.View.extend({
 	getValue: function () {
 		var value = "";
 
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < 8; i++) {
 			value += padHex(MEMORY[this.index + i],2);
 		}
 
@@ -141,7 +141,7 @@ var MemWordView = Backbone.View.extend({
 		var newValue = this.getValue();
 		if (this.lastValue !== newValue) {
 			this.lastValue = newValue;
-			this.$('.value').text(padHex(newValue, 20));
+			this.$('.value').text(padHex(newValue, 16));
 		}
 	}
 });

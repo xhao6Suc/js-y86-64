@@ -56,12 +56,14 @@ function RESET() {
 function LD (addr, mem) {
 	mem = mem || MEMORY;
 	var result = new Long(0,0,true);
-	if (addr < 0 || addr + 8 > MEM_SIZE) {
+
+	if((typeof(addr) == "object" && (addr.lessThan(0) || addr.greaterThan(MEM_SIZE - 8))) || 
+			(addr < 0 || addr + 8 > MEM_SIZE)) {
 		STAT = 'ADR';
 		throw new Error("Invalid address 0x" + addr.toString(16));
 	}
 	for (var i = 0; i < 8; i++) {
-		var tempMem = new Long(mem[addr + i]);
+		var tempMem = new Long(mem[(typeof(addr) == "object" ? addr.add(i).toInt() : addr + i)]);
 		result = result.or(tempMem.shiftLeft(i*8));
 	}
 
@@ -79,7 +81,7 @@ function ST(addr, data, bytes){
 		bytes = data.toBytes().length;//Math.ceil(Math.log(data.add(1).toInt()) / Math.log(16) / 2);
 	}
 	for (i = 0; i < bytes; i++){
-		MEMORY[addr + i] = data.and(0xFF);
+		MEMORY[(typeof(addr) == "object" ? addr.add(i).toInt() : addr + i)] = data.and(0xFF);
 		data = data.shiftRight(8);
 	}
 	return addr;
@@ -357,16 +359,16 @@ var STEP_INTERVAL = null, RUN_DONE_CALLBACK;
 
 // Run 256 instructions
 function RUN_STEP () {
-	for (var i = 0; i < 1; i++) {
+	for (var i = 0; i < 256; i++) {
 		if (PC.lessThan(MEM_SIZE) && STAT === 'AOK'){
 			STEP();
-			Backbone.Events.trigger('app:redraw');
 		}
 		else {
 			PAUSE();
 			break;
 		}
 	}
+	Backbone.Events.trigger('app:redraw');
 }
 
 // Returns true if the machine is currently running
@@ -392,7 +394,7 @@ function RUN (cb) {
 		STAT = 'AOK';
 
 	// Use fastest available interval the browser can provide
-	STEP_INTERVAL = setInterval(RUN_STEP, 90);
+	STEP_INTERVAL = setInterval(RUN_STEP, 0);
 	RUN_DONE_CALLBACK = cb;
 }
 

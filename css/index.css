@@ -222,7 +222,7 @@ html, body {
 	font-family: 'Inconsolata';
 	font-size: 14px;
 
-	max-width: 450px;
+	/*max-width: 450px;*/
 	margin: 0 auto;
 }
 
@@ -231,10 +231,14 @@ html, body {
 	flex: 1 1;
 }
 
+.registers .status_column {
+	margin-right: 10px;
+}
 .registers .register_column {
 	width: 70%;
 	min-width: 250px;
     margin-right:20px;
+    margin-left: 10px;
 }
 
 .registers .label {
@@ -254,7 +258,10 @@ html, body {
 	padding-bottom: 2px;
 }
 
-.registers .register .value_hex,
+.registers .register .value_hex{
+	width: 120px;
+    margin-right: 8px;
+}
 .registers .register .value_dec {
 	-webkit-flex: 1 1;
 	flex: 1 1;

@@ -46,8 +46,8 @@ Pow:
     
     # We'll use %rsi to demonstrate callee-save in Multiply,
     # since Multiply uses the callee-save %rsi register.
-    mrmovq 8(%rbp), %rcx  # rcx = base
-    mrmovq 12(%rbp), %rdi # rdi = exp
+    mrmovq 16(%rbp), %rcx  # rcx = base
+    mrmovq 24(%rbp), %rdi # rdi = exp
     
     rrmovq %rcx, %rdx     # rdx = base
     addq %rsi, %rdi       # rdi -= 1

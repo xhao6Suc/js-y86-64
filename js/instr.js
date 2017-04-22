@@ -148,30 +148,30 @@ INSTR[7] = function ()  {
 };
 INSTR[8] = function () {
 	var valB = getRegister(4),
-		valE = valB.subtract(4);
-	ST(valE.toInt(), PC, 4);
+		valE = valB.subtract(8);
+	ST(valE.toInt(), PC, 8);
 	REG[4] = valE;
 	PC = this.Dest;
 };
 INSTR[9] = function () {
 	var valA = getRegister(4),
 		valB = getRegister(4),
-		valE = valB.add(4),
+		valE = valB.add(8),
 		valM = LD(valA.toInt());
-		REG[4] = valE;
-		PC = valM;
+	REG[4] = valE;
+	PC = valM;
 };
 INSTR[10] = function () {
 	var valA = getRegister(this.rA),
 		valB = getRegister(4),
-		valE = valB.subtract(4);
-	ST(valE.toInt(), valA, 4);
+		valE = valB.subtract(8);
+	ST(valE.toInt(), valA, 8);
 	REG[4] = valE;
 };
 INSTR[11] = function () {
 	var valA = getRegister(4),
 		valB = getRegister(4),
-		valE = valB.add(4),
+		valE = valB.add(8),
 		valM = LD(valA.toInt());
 	REG[4] = valE;
 	REG[this.rA] = valM;
