@@ -42,7 +42,7 @@ var MemoryView = Backbone.View.extend({
 			$word = new MemWordView({ index: idx });
 			this.$words.push($word);
 			this.$wordContainer.append($word.$el);
-			idx += 10;
+			idx += 8;
 		}
 
 		this.numRendered = idx;
