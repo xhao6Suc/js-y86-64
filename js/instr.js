@@ -14,13 +14,13 @@ INSTR[2] = function () {
 			REG[this.rB] = getRegister(this.rA);
 			break;
 		case 1:
-			// CMOVQE
+			// CMOVLE
 			if (SF === 1 || ZF === 1) {
 				REG[this.rB] = getRegister(this.rA);
 			}
 			break;
 		case 2:
-			// CMOVQ
+			// CMOVL
 			if (SF === 1) {
 				REG[this.rB] = getRegister(this.rA);
 			}
