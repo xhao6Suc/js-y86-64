@@ -266,7 +266,8 @@ function ASSEMBLE (raw, errorsOnly) {
 		if (dir) {
 			if (dir[1] === '.pos') {
 				try {
-					counter = parseNumberLiteral(dir[2]).toInt();
+					pos = dir[2].replace(/ (code|data|rodata|stack)$/i, '');
+					counter = parseNumberLiteral(pos).toInt();
 				} catch (e) {
 					errors.push([i + 1, e.message]);
 				}
