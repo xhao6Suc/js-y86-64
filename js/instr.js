@@ -39,7 +39,7 @@ INSTR[2] = function () {
 			break;
 		case 5:
 			// CMOVGE
-			if (SF === 0 || ZF === 1) {
+			if (SF === 0) {
 				getRegister(this.rB) = getRegister(this.rA);
 			}
 			break;
@@ -76,21 +76,21 @@ INSTR[6] = function () { // op
 		valB = getRegister(this.rB),
 		sgnA, sgnB, sgnR;
 
-	sgnA = !!(valA.toBytes()[0] == 0xFF);
-	sgnB = !!(valB.toBytes()[0] == 0xFF);
+	sgnA = !!(valA.toBytes()[0] & 0x80);
+	sgnB = !!(valB.toBytes()[0] & 0x80);
 
 	switch(this.fn) {
 		case 0:
 			REG[this.rB] = REG[this.rB].add(getRegister(this.rA));
-			sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
-			OF = +(sgnA && sgnB && !sgnR ||
-			       !sgnA && !sgnB && sgnR)
+			sgnR = !!(getRegister(this.rB).toBytes()[0] & 0x80);
+			OF = +( sgnA &&  sgnB && !sgnR ||
+			       !sgnA && !sgnB &&  sgnR)
 			break;
 		case 1:
 			REG[this.rB] = REG[this.rB].subtract(getRegister(this.rA));
-			sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
-			OF = +(sgnA && sgnB && !sgnR ||
-			       !sgnA && !sgnB && sgnR)
+			sgnR = !!(getRegister(this.rB).toBytes()[0] & 0x80);
+			OF = +( sgnA && !sgnB &&  sgnR ||
+			       !sgnA &&  sgnB && !sgnR)
 			break;
 		case 2:
 			REG[this.rB] = getRegister(this.rA).and(getRegister(this.rB));
@@ -99,7 +99,7 @@ INSTR[6] = function () { // op
 			REG[this.rB] = getRegister(this.rA).xor(getRegister(this.rB));
 			break;
 	}
-	SF = getRegister(this.rB).toBytes()[0] == 0xFF ? 1 : 0;
+	SF = getRegister(this.rB).toBytes()[0] & 0x80 ? 1 : 0;
 	ZF = getRegister(this.rB).toString() === "0" ? 1 : 0;
 };
 INSTR[7] = function ()  {
@@ -134,7 +134,7 @@ INSTR[7] = function ()  {
 			break;
 		case 5:
 			// JGE
-			if (SF === 0 || ZF === 1) {
+			if (SF === 0) {
 				PC = this.Dest;
 			}
 			break;
@@ -183,22 +183,20 @@ INSTR[12] = function () { // iaddq, isubq, iandq, ixorq
     var sgnA, sgnB, sgnR;
     switch(this.fn) {
     case 0:
-		sgnA = !!(valA.toBytes()[0] == 0xFF);
-		sgnB = !!(valB.toBytes()[0] == 0xFF);
+		sgnA = !!(valA.toBytes()[0] & 0x80);
+		sgnB = !!(valB.toBytes()[0] & 0x80);
 		REG[this.rB] = REG[this.rB].add(valA);
-		sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
-
-		OF = +(sgnA && sgnB && !sgnR ||
-		       !sgnA && !sgnB && sgnR)
+		sgnR = !!(getRegister(this.rB).toBytes()[0] & 0x80);
+		OF = +( sgnA &&  sgnB && !sgnR ||
+		       !sgnA && !sgnB &&  sgnR)
 		break;
     case 1:
-		sgnA = !!(valA.toBytes()[0] == 0xFF);
-		sgnB = !!(valB.toBytes()[0] == 0xFF);
+		sgnA = !!(valA.toBytes()[0] & 0x80);
+		sgnB = !!(valB.toBytes()[0] & 0x80);
 		REG[this.rB] = REG[this.rB].subtract(valA);
-		sgnR = !!(getRegister(this.rB).toBytes()[0] == 0xFF);
-
-		OF = +(sgnA && sgnB && !sgnR ||
-		       !sgnA && !sgnB && sgnR)
+		sgnR = !!(getRegister(this.rB).toBytes()[0] & 0x80);
+		OF = +( sgnA && !sgnB &&  sgnR ||
+		       !sgnA &&  sgnB && !sgnR)
 		break;
     case 2:
 		REG[this.rB] = valA.and(getRegister(this.rB));
@@ -207,7 +205,7 @@ INSTR[12] = function () { // iaddq, isubq, iandq, ixorq
 		REG[this.rB] = valA.xor(getRegister(this.rB));
 		break;
     }
-    SF = getRegister(this.rB).toBytes()[0] == 0xFF ? 1 : 0;
+    SF = getRegister(this.rB).toBytes()[0] & 0x80 ? 1 : 0;
     ZF = getRegister(this.rB).toString() === "0" ? 1 : 0;
 };
 
