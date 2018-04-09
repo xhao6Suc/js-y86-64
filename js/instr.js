@@ -110,13 +110,13 @@ INSTR[7] = function ()  {
 			break;
 		case 1:
 			// JLE
-			if (SF === 1 || ZF === 1) {
+			if (((SF ^ OF) | ZF) === 1) {
 				PC = this.Dest;
 			}
 			break;
 		case 2:
 			// JL
-			if (SF === 1) {
+			if ((SF ^ OF) === 1) {
 				PC = this.Dest;
 			}
 			break;
@@ -134,13 +134,13 @@ INSTR[7] = function ()  {
 			break;
 		case 5:
 			// JGE
-			if (SF === 0) {
+			if ((SF ^ OF) === 0) {
 				PC = this.Dest;
 			}
 			break;
 		case 6:
 			// JG
-			if (SF === 0 && ZF === 0) {
+			if ((SF ^ OF) === 0 && ZF === 0) {
 				PC = this.Dest;
 			}
 			break;
