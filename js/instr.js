@@ -78,7 +78,9 @@ INSTR[6] = function () { // op
 
 	sgnA = !!(valA.toBytes()[0] & 0x80);
 	sgnB = !!(valB.toBytes()[0] & 0x80);
-
+	
+	OF = 0; // clears OF. Only update OF when fn is ADD or SUB
+	
 	switch(this.fn) {
 		case 0:
 			REG[this.rB] = REG[this.rB].add(getRegister(this.rA));
